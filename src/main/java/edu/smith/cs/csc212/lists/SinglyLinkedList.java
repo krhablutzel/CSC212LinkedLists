@@ -2,7 +2,6 @@ package edu.smith.cs.csc212.lists;
 
 import me.jjfoley.adt.ListADT;
 import me.jjfoley.adt.errors.BadIndexError;
-import me.jjfoley.adt.errors.TODOErr;
 
 /**
  * A Singly-Linked List is a list that has only knowledge of its very first
@@ -21,17 +20,59 @@ public class SinglyLinkedList<T> extends ListADT<T> {
 	@Override
 	public T removeFront() {
 		checkNotEmpty();
-		throw new TODOErr();
+		// save removed value
+		T removed = this.start.value;
+		
+		// replace start
+		this.start = this.start.next;
+		
+		// return removed value
+		return removed;
 	}
 
 	@Override
 	public T removeBack() {
-		throw new TODOErr();
+		checkNotEmpty();
+		
+		// special case for list with only 1 node
+		if (this.start.next == null) {
+			return removeFront();
+		}
+		
+		// otherwise, go through list
+		Node<T> secondLast = null;
+		// find the second-to-last node
+		for (secondLast = this.start; secondLast.next.next != null; secondLast = secondLast.next) {}
+		// save last node's value
+		T removed = secondLast.next.value;
+		
+		// make second-to-last node the last node
+		secondLast.next = null;
+		
+		// return removed value
+		return removed;
 	}
 
 	@Override
 	public T removeIndex(int index) {
-		throw new TODOErr();
+		checkNotEmpty();
+		
+		// special case for removing front
+		if (index == 0) {
+			return removeFront();
+		}
+		
+		// otherwise, find node before index and point to node after index
+		// we're "at" the next index - so increment before comparing to index
+		int at = 0;
+		for (Node<T> n = this.start; n != null; n = n.next) {
+			if (++at == index) {
+				T removed = n.next.value;
+				n.next = n.next.next;
+				return removed;
+			}
+		}
+		throw new BadIndexError(index);
 	}
 
 	@Override
@@ -41,24 +82,54 @@ public class SinglyLinkedList<T> extends ListADT<T> {
 
 	@Override
 	public void addBack(T item) {
-		throw new TODOErr();
+		// account for empty list
+		if (isEmpty()) {
+			addFront(item);
+			return;
+		}
+		
+		// otherwise, go through list
+		Node<T> last = null;
+		// find the node whose next is null
+		for (last = this.start; last.next != null; last = last.next) {}
+		// set its next to new back node
+		last.next = new Node<T>(item);
 	}
 
 	@Override
 	public void addIndex(int index, T item) {
-		throw new TODOErr();
+		// account for empty list or adding to front
+		if (isEmpty() || index == 0) {
+			this.start = new Node<T>(item, start);
+			return;
+		}
+		
+		// otherwise, go through list and add at index
+		// we're "at" the next index - so increment before comparing to index
+		int at = 0;
+		for (Node<T> n = this.start; n != null; n = n.next) {
+			if (++at == index) {
+				n.next = new Node<T>(item, n.next);
+				return;
+			}
+		}
+		throw new BadIndexError(index);
 	}
 
 	@Override
 	public T getFront() {
 		checkNotEmpty();
-		throw new TODOErr();
+		return this.start.value;
 	}
 
 	@Override
 	public T getBack() {
 		checkNotEmpty();
-		throw new TODOErr();
+		Node<T> last = null;
+		// find the node whose next is null
+		for (last = this.start; last.next != null; last = last.next) {}
+		// returns the value of the node whose next is null
+		return last.value;
 	}
 
 	@Override
@@ -76,7 +147,14 @@ public class SinglyLinkedList<T> extends ListADT<T> {
 	@Override
 	public void setIndex(int index, T value) {
 		checkNotEmpty();
-		throw new TODOErr();
+		int at = 0;
+		for (Node<T> n = this.start; n != null; n = n.next) {
+			if (at++ == index) {
+				n.value = value;
+				return;
+			}
+		}
+		throw new BadIndexError(index);
 	}
 
 	@Override
