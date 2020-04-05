@@ -1,6 +1,5 @@
 package edu.smith.cs.csc212.lists;
 
-import edu.smith.cs.csc212.lists.SinglyLinkedList.Node;
 import me.jjfoley.adt.ListADT;
 import me.jjfoley.adt.errors.*;
 
